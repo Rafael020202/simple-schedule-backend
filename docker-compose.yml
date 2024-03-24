@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: mongodb
+    image: mongo
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - 27017:27017
+
+  schedule:
+    container_name: schedule
+    image: node:alpine3.16
+    working_dir: /schedule/backend
+    restart: always
+    command: sh -c "yarn --check-files && yarn dev"
+    ports:
+      - 3002:3002
+    volumes:
+      - .:/schedule/backend
+    links:
+      - mongo
+    depends_on:
+      - mongo
+volumes:
+  mongodb_data:
+    driver: local
